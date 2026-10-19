@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>额度自定义｜线上互动</title>
+<style>
+:root{--bg1:#f3f4f5;--bg2:#8e9195;--ink:#0b0b0b;--paper:#fcfcfc;--side:#ececee;--line:#d2d4d7;--mute:#6b6e73;--y:#f2c200;--r:#e5483c;--g:#1fd38a;--cur:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' shape-rendering='crispEdges'%3E%3Cpath d='M3 2v17h4v-4h2v4h3v-6h6z' fill='black' stroke='white'/%3E%3C/svg%3E") 3 2,default;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#2b2d30;--bg2:#08090a;--ink:#f0f0f0;--paper:#18191b;--side:#222427;--line:#35373b;--mute:#9a9da1}}
+*{box-sizing:border-box;cursor:var(--cur)}
+html,body{height:100%;margin:0}
+body{font-family:"PingFang SC","Noto Sans SC","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);background:linear-gradient(115deg,var(--bg2),var(--bg1) 70%);overflow:hidden}
+#bar{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:28px;display:flex;justify-content:space-between;align-items:center;padding:0 12px;font-size:12px;background:rgba(255,255,255,.35);backdrop-filter:blur(14px);z-index:3000;color:#111}
+#bar span{margin-right:14px}#bar b{margin-right:14px}
+#title{position:fixed;left:5vw;bottom:8vh;pointer-events:none}
+#title h1{margin:0;font-size:clamp(54px,10vw,140px);line-height:.95;font-weight:900;color:var(--ink)}
+#title p{margin:16px 0 0;font-size:clamp(14px,1.7vw,21px);font-weight:500}
+.ic{position:fixed;right:100px;width:76px;text-align:center;background:none;border:0;color:var(--ink);font-size:11px;padding:4px;border-radius:6px}
+.ic:hover,.ic:focus-visible{background:rgba(127,127,127,.25);outline:none}
+.ic svg{width:50px;height:50px;display:block;margin:0 auto 3px}
+#dock{position:fixed;right:0;top:50%;transform:translateY(-50%);width:84px;background:#050505;border-radius:42px 0 0 42px;padding:18px 0;display:flex;flex-direction:column;gap:16px;align-items:center;z-index:2500}
+.ring{background:none;border:0;color:#fff;font-size:12px;text-align:center}
+.ring svg{width:46px;height:46px;display:block;margin:0 auto 3px;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:4}.ring .t{stroke:#333}.ring .v{stroke-linecap:round;transition:stroke-dasharray .5s}
+.ring:focus-visible{outline:2px solid #fff;border-radius:8px}
+.win{position:fixed;background:var(--paper);border:1px solid rgba(0,0,0,.45);border-radius:10px;display:flex;flex-direction:column;box-shadow:0 18px 40px rgba(0,0,0,.35),0 2px 6px rgba(0,0,0,.3);animation:o .16s ease-out;overflow:hidden}
+.win.big{left:4vw;top:44px;width:calc(100vw - 130px);height:calc(100vh - 80px)}
+.win.fin{left:12vw;top:70px;width:min(860px,76vw);height:min(560px,72vh)}
+.win.max{left:0!important;top:28px!important;width:calc(100vw - 90px)!important;height:calc(100vh - 28px)!important;border-radius:0}
+@keyframes o{from{transform:scale(.97);opacity:0}}
+.wh{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--side);border-bottom:1px solid var(--line);font-size:13px;font-weight:600;touch-action:none;user-select:none}
+.wh i{width:12px;height:12px;border-radius:50%;display:inline-block;border:0}
+.wh button{width:12px;height:12px;border-radius:50%;border:0;padding:0}
+.wh .x{background:#ff5f57}.wh .m{background:#febc2e}.wh .z{background:#28c840}
+.wh em{margin:0 auto;font-style:normal}
+.wb{flex:1;overflow:auto;padding:16px;font-size:14px;line-height:1.75;min-height:0}
+.fz{display:grid;grid-template-columns:170px 1fr;height:100%}
+.fz nav{background:var(--side);border-right:1px solid var(--line);padding:8px}
+.fz nav button{display:block;width:100%;text-align:left;border:0;background:none;color:var(--ink);padding:7px 8px;border-radius:6px;font-size:13px}
+.fz nav button.on{background:rgba(120,120,128,.25)}
+.fz main{overflow:auto;padding:14px 18px}
+.row{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink);padding:9px 4px;font-size:14px}
+.row:hover,.row.on{background:rgba(120,120,128,.15)}
+.ph{background:repeating-linear-gradient(45deg,var(--side),var(--side) 8px,var(--line) 8px,var(--line) 9px);height:90px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--mute);margin:10px 0}
+.note{font-size:12px;color:var(--mute)}
+.btn{border:1px solid var(--ink);background:var(--paper);color:var(--ink);padding:7px 11px;border-radius:7px;font-size:13px;margin:3px 4px 3px 0;text-align:left}
+.btn:hover:not(:disabled){background:var(--ink);color:var(--paper)}.btn:disabled{opacity:.35}
+.btn:focus-visible,input:focus-visible{outline:2px solid var(--y);outline-offset:2px}
+.msg{border-left:3px solid var(--ink);padding:2px 10px;margin:7px 0}.drop{border-color:var(--r);color:var(--mute);text-decoration:line-through}
+.seg{display:flex;gap:5px;margin:3px 0 8px}.seg button{flex:1;padding:6px;border:1px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:7px;font-size:13px}.seg .on{background:var(--ink);color:var(--paper)}
+.pips{display:flex;gap:4px;margin:6px 0}.pips i{flex:1;height:9px;background:var(--line)}.pips i.on{background:var(--y)}
+.grid2{display:grid;grid-template-columns:260px 1fr;gap:18px}
+.warn{background:var(--r);color:#fff;padding:8px 10px;border-radius:7px;margin:8px 0;font-size:13px}
+#ws{position:relative;height:300px;border:1px dashed var(--mute);border-radius:8px;overflow:hidden}
+.card{position:absolute;width:210px;background:var(--paper);border:1px solid var(--ink);border-radius:8px;box-shadow:3px 3px 0 rgba(0,0,0,.3);font-size:12px;line-height:1.5}
+.card div{padding:7px 9px}.card .h{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);background:var(--side);padding:3px 6px;border-radius:7px 7px 0 0}
+.card .h button{border:0;background:#ff5f57;width:11px;height:11px;border-radius:50%;padding:0}
+@media (max-width:700px){
+ #bar .d{display:none}
+ #dock{top:auto;bottom:0;left:0;right:0;transform:none;width:100%;flex-direction:row;justify-content:space-around;border-radius:30px 30px 0 0;padding:14px 0 calc(14px + env(safe-area-inset-bottom,0px))}
+ .ring svg{width:70px;height:70px}.ring{font-size:15px}
+ .ic{right:12px;width:70px}#title{bottom:180px}
+ .win,.win.big,.win.fin{left:0!important;top:28px!important;width:100vw!important;height:calc(100% - 28px - 118px)!important;border-radius:12px 12px 0 0}
+ .win.max{width:100vw!important;height:calc(100% - 28px)!important}
+ .fz{grid-template-columns:1fr;grid-template-rows:auto 1fr}.fz nav{display:flex;overflow:auto;border-right:0;border-bottom:1px solid var(--line)}.fz nav button{white-space:nowrap;width:auto}
+ .grid2{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div id="bar"><div><b>◉ Finder</b><span class="d">文件</span><span class="d">编辑</span><span class="d">显示</span><span class="d">前往</span><span class="d">窗口</span><span class="d">帮助</span></div><div><span>HUMAN × AI / CUSTOM USAGE</span><span class="d">⌕ ◐ 📶</span><span id="clk"></span></div></div>
+<div id="title"><h1>额度<br>自定义</h1><p>当资源和劳动力是有限的时候，<br>智体必须做出选择</p></div>
+<button class="ic" style="top:50px" onclick="openFinder()"><svg viewBox="0 0 52 52"><path d="M4 12h18l4 5h22v28H4z" fill="#4aa3f0"/><path d="M4 20h44v25H4z" fill="#7cc0fa"/></svg>Archive</button>
+<button class="ic" style="top:140px" onclick="openMap()"><svg viewBox="0 0 52 52"><rect x="4" y="4" width="44" height="44" rx="10" fill="#fff" stroke="#999"/><path d="M4 30l20-8 24 14v6a6 6 0 0 1-6 6H10a6 6 0 0 1-6-6z" fill="#6ccf6a"/><circle cx="26" cy="24" r="8" fill="#2f7be5"/></svg>Explore</button>
+<nav id="dock" aria-label="额度状态栏"></nav><div id="wins"></div>
+<script>
+const $=s=>document.querySelector(s);
+setInterval(tc,1000);function tc(){$('#clk').textContent=new Date().toLocaleString('zh-CN',{month:'numeric',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit'})}tc();
+const C=2*Math.PI*20;
+const S=[{k:'limit',n:'限额',col:'var(--y)',v:73,f:()=>openLimit()},{k:'over',n:'超额',col:'var(--r)',v:100,f:()=>openOver()},{k:'cust',n:'自定义',col:'var(--g)',v:21,f:()=>openCust()}];
+function draw(){$('#dock').innerHTML=S.map((s,i)=>`<button class="ring" onclick="S[${i}].f()" aria-label="进入${s.n}，模拟额度已用${s.v}%"><svg viewBox="0 0 48 48"><circle class="t" cx="24" cy="24" r="20"/><circle class="v" cx="24" cy="24" r="20" stroke="${s.col}" stroke-dasharray="${C*s.v/100} ${C}"/></svg>${s.v}%</button>`).join('')}
+function setV(k,v){S.find(s=>s.k==k).v=Math.max(0,Math.min(100,Math.round(v)));draw()}draw();
+let z=100,n=0;
+function win(id,title,cls,html){
+ let w=document.getElementById(id);if(w){w.style.display='flex';w.style.zIndex=++z;return w}
+ w=document.createElement('div');w.className='win '+cls;w.id=id;w.style.zIndex=++z;
+ if(cls=='fin'){w.style.left=(8+n*3)+'vw';w.style.top=(60+n*20)+'px';n=(n+1)%4}
+ w.innerHTML=`<div class="wh"><button class="x" aria-label="关闭"></button><button class="m" aria-label="最小化"></button><button class="z" aria-label="放大"></button><em>${title}</em></div><div class="wb" style="padding:${cls=='fin'?0:16}px">${html}</div>`;
+ const h=w.querySelector('.wh');w.querySelector('.x').onclick=()=>w.remove();w.querySelector('.m').onclick=()=>w.style.display='none';w.querySelector('.z').onclick=()=>w.classList.toggle('max');
+ w.addEventListener('pointerdown',()=>w.style.zIndex=++z);
+ let dx,dy,d=0;h.onpointerdown=e=>{if(innerWidth<=700||e.target.tagName=='BUTTON'||w.classList.contains('max'))return;d=1;dx=e.clientX-w.offsetLeft;dy=e.clientY-w.offsetTop;h.setPointerCapture(e.pointerId)};
+ h.onpointermove=e=>{if(d){w.style.left=e.clientX-dx+'px';w.style.top=Math.max(28,e.clientY-dy)+'px'}};h.onpointerup=()=>d=0;
+ $('#wins').appendChild(w);return w}
+const B=id=>document.querySelector('#'+id+' .wb');
+
+/* data */
+const W=[
+{ch:1,t:'圈圈',m:'系列作品｜230 × 150 cm',c:'我们以为自己在认识世界，却可能始终在既有认知划定的范围内打转。经验帮助我们快速判断，也限制了我们看见其他可能的方式。当熟悉的标准成为理解世界的默认规则，我们看到的便可能只是认知的回声。选择的限额，因而不仅存在于外部系统，也存在于每个人理解世界的方式之中。'},
+{ch:1,t:'变形：Meta-Morph-Osis',m:'孙李俊哲、卢海宁｜影像｜4 分 27 秒',c:'数字媒介降低了身份生成与转换的门槛，却没有因此消除身份的边界。当一个人能够不断生成新的形象，选择的数量不断增加，自我认知却未必同步扩展。作品将我们带到选择的另一面：当身份可以被无限替换，我们如何辨认自己，又依据什么决定哪些身份值得留下？'},
+{ch:1,t:'皮诺曹',m:'GAN｜约 200 × 200 cm（原资料标注）',c:'模拟生命需要设定形象、特征与运行规则，但真实生命并不完全服从预设。蚂蚁的介入打破了人造秩序的完整性，也让系统的控制边界显现出来。在这一部分，限额不再只是对数量的规定，而是任何系统在定义、模拟与控制对象时，都无法回避的能力边界。'},
+{ch:2,t:'信息时代的拾穗者',m:'无声诗｜绘画｜100 × 75 cm',c:'当手机不断接收信息、安装应用，有限的存储与处理能力终将显露边界。但信息超额不仅发生在设备内部，也发生在人与技术的沟通之中。即使信息已经存在于系统里，也不意味着它能够被理解、被使用或被有效传递。那些被技术语言挡在外面的经验，同样是信息时代容易忽略的部分。'},
+{ch:2,t:'暗室',m:'贾雨彤｜三频道影像｜12 分 31 秒｜2026',c:'数字图像能够在极短的时间内呈现，却无法脱离漫长的物质形成过程。我们看到的内容越多，越容易将注意力集中在屏幕上的结果，而忽略支撑结果的条件。《暗室》将被即时性遮蔽的物质与时间重新带回观看之中：当信息不断涌现，哪些基础被留在了画面之外？'},
+{ch:3,t:'从捞月到饮水',m:'Zhiyi Jin｜影像｜4 分 13 秒',c:'当注意力成为有限资源，我们习惯于加速、筛选和压缩体验，以便容纳更多内容。但被压缩的也可能是感知本身。作品提醒我们，超额不一定意味着获得更多：当输入不断增加，真正被体验和理解的内容反而可能减少。从追逐到饮水，是一次对时间与注意力分配方式的重新审视。'},
+{ch:3,t:'跳动的 10%',m:'任子晴｜三件作品并峙｜单件尺寸：30 × 30 cm｜足银、黄铜、黑檀木、珍珠',c:'当我们依据过往经验预测结果，熟悉的规律便成为判断的依据。但真正引起注意的，有时恰恰是那一点偏离预期的变化。作品让我们重新思考：如果所有选择都只遵循既定标准，我们是否也会错过那些尚未被预料的可能？自定义并不意味着抛弃规则，而是在规则之中，为意外保留位置，也为重新判断留下空间。'},
+{ch:3,t:'洞穴',m:'800mbh｜AI 光影装置',c:'当我们把判断交给系统，往往也默认了系统理解世界的方式。但系统给出的结果并不等同于全部现实，它同样受到识别逻辑、训练方式与判断标准的限制。自定义并不是简单地用人的判断取代机器，而是重新审视判断依据：我们可以使用系统提供的答案，却不必把它当作唯一的真实。'}];
+const CL=[['圈圈','你看到的，是完整信息，还是被某种框架筛选过的信息？',0],['皮诺曹','哪些部分由系统设定，哪些部分不完全受控？',0],['信息时代的拾穗者','同一句话，为什么不同的人会理解成不同的意思？',1],['暗室','一个看似轻盈的数字界面，究竟依赖什么才能存在？',1],['跳动的 10%','规则之内是否仍然存在无法预先安排的结果？',2]];
+const OPEN=[openLimit,openOver,openCust];
+
+/* Finder */
+let fin={d:'0',s:null};
+const DIRS=[['0','00_EXHIBITION｜展览说明'],['1','01_LIMIT'],['2','02_OVER LIMIT'],['3','03_CUSTOMIZE'],['H','HIDDEN_FILES｜隐藏线索']];
+function openFinder(){win('w-f','ARCHIVE / 展览档案','fin','');fin.s=null;rf()}
+function rf(){
+ const d=fin.d;let m='';
+ if(d=='0')m=`<h3>展览说明</h3><p>当自然、人类与人工智能都受到资源、能力与精力的限制，选择便成为不可避免的行动。本展以“限额—超额—自定义”构建整体叙事：从认识选择规则，到发现取舍带来的遗漏，最终重新思考选择标准与决定的主体。</p><p>限额：规则与额度如何划定可选范围。<br>超额：需求超出额度后，被筛选、遗漏或排除的内容。<br>自定义：在认识限制的基础上，重新决定如何分配有限的资源，以及由谁作出决定。</p><p class="note">三个章节可按任意顺序浏览。</p>`;
+ else if(d=='H')m=`<p class="note">这些文件没有标准答案。</p>`+CL.map((c,i)=>`<button class="row" onclick="fin.s=${i};rf()">clue_${c[0]}.txt</button>`).join('')+(fin.s!=null?`<div class="msg"><b>${CL[fin.s][0]}</b><br>${CL[fin.s][1]}<br><button class="btn" onclick="OPEN[${CL[fin.s][2]}]()">打开相关额度：${S[CL[fin.s][2]].n}</button></div>`:'');
+ else{const L=W.map((w,i)=>[w,i]).filter(x=>x[0].ch==d);m=L.map(([w,i])=>`<button class="row ${fin.s==i?'on':''}" onclick="fin.s=${i};rf()">${w.t}<br><span class="note">${w.m}</span></button>`).join('')+(fin.s!=null&&W[fin.s].ch==d?`<div class="ph">作品图片（待补充）</div><h3>${W[fin.s].t}</h3><p class="note">${W[fin.s].m}</p><p><b>策展解读</b><br>${W[fin.s].c}</p><p class="note">作品介绍待补充。</p>`:'')}
+ B('w-f').innerHTML=`<div class="fz"><nav>${DIRS.map(x=>`<button class="${x[0]==d?'on':''}" onclick="fin.d='${x[0]}';fin.s=null;rf()">📁 ${x[1]}</button>`).join('')}</nav><main>${m}</main></div>`}
+
+function openMap(){const q=encodeURIComponent('北京大学中国当代艺术档案馆 798');win('w-m','Explore｜展览地图','fin',`<p><b>北京大学中国当代艺术档案馆（798）</b><br>2027年1月 — 2月</p><p class="note">具体场地与地址以最终确认信息为准。</p><a class="btn" style="display:inline-block;text-decoration:none" href="https://uri.amap.com/search?keyword=${q}" target="_blank" rel="noopener">高德地图</a><a class="btn" style="display:inline-block;text-decoration:none" href="https://map.baidu.com/search/${q}" target="_blank" rel="noopener">百度地图</a><a class="btn" style="display:inline-block;text-decoration:none" href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener">Google Maps</a>`)}
+
+/* 01 LIMIT: task challenge */
+const LC=[['细节','查看细节','系列作品，尺寸 230 × 150 cm。'],['追问','它隐喻什么？','个体认知的循环。'],['追问','什么在叠加？','经验、偏见、语言与习惯层层叠加。'],['追问','结果是什么？','人们在相互猜疑与试探中，被符号和标签简化，逐渐远离真实。'],['对照','对照策展解读 A','熟悉的标准一旦成为默认规则，我们看到的可能只是认知的回声。'],['对照','对照策展解读 B','选择的限额，也存在于每个人理解世界的方式之中。']];
+let lm={cr:4,got:[],end:false};
+function openLimit(){win('w-l','01｜限额 LIMIT · 任务：只用 4 点额度，理解《圈圈》','big','');rl()}
+function rl(){
+ setV('limit',lm.got.length||lm.end?(4-lm.cr)*25:73);
+ const ended=lm.end||lm.cr==0,kinds=[...new Set(lm.got.map(i=>LC[i][0]))];
+ B('w-l').innerHTML=`<div class="grid2"><div><div class="ph">《圈圈》图片（待补充）</div><p class="note">系列作品｜230 × 150 cm</p><div class="pips">${[0,1,2,3].map(i=>`<i class="${i<lm.cr?'on':''}"></i>`).join('')}</div><p class="note">剩余额度 ${lm.cr} / 4。每个行动消耗 1 点。</p>
+ ${LC.map((c,i)=>lm.got.includes(i)?'':`<button class="btn" ${ended?'disabled':''} onclick="lm.got.push(${i});lm.cr--;rl()">${c[0]}｜${c[1]}</button>`).join('')}<br><button class="btn" ${ended?'disabled':''} onclick="lm.end=true;rl()">保留额度，结束</button></div>
+ <div><h3>已解锁的线索</h3>${lm.got.length?lm.got.map(i=>`<div class="msg"><b>${LC[i][1]}</b><br>${LC[i][2]}</div>`).join(''):'<p class="note">还没有线索。先决定把第一点额度用在哪里。</p>'}
+ ${ended?`<div class="warn">任务结束</div><p><b>结果摘要</b><br>你用了 ${4-lm.cr} 点，保留 ${lm.cr} 点；解锁 ${lm.got.length} / 6 条线索，放弃 ${6-lm.got.length} 条。<br>${kinds.includes('对照')?'你把作品放回了策展语境。':'你只听了作品自己的说法，没有对照策展解读。'}${lm.cr>=2?'你把一部分额度留给了未知。':''}</p><button class="btn" onclick="lm={cr:4,got:[],end:false};rl()">重新开始</button>`:''}</div></div>`}
+
+/* 02 OVER: overload */
+const OS=['“手机卡了”——奶奶并不理解这个日常表达。','一个习以为常的技术词汇，在两代人的经验之间产生了距离。','有限的存储与处理能力终将显露边界。','信息已经存在于系统里，不意味着能被理解、被使用或被有效传递。','屏幕中快速生成的图像，依赖于数亿年形成的稀土资源。','屏幕自身也是由物质、技术与时间共同构成的风景。','我们看到的内容越多，越容易忽略支撑结果的条件。','倍速文化中，细腻的情感、语气与日常细节容易被忽略。'];
+let ov={open:[],lost:[],n:0,hit:false,done:false};
+function openOver(){win('w-o','02｜超额 OVER LIMIT · 任务：同时处理所有信息','big','');ro()}
+function addO(k){for(let j=0;j<k&&ov.n<OS.length;j++){ov.open.push(ov.n++)}if(ov.open.length>5)ov.hit=true;ro()}
+function closeO(i){ov.open=ov.open.filter(x=>x!=i);ov.lost.push(i);if(ov.hit&&ov.open.length<=3)ov.done=true;ro()}
+function ro(){
+ setV('over',ov.open.length*20);const over=ov.hit&&!ov.done;
+ B('w-o').innerHTML=`<p>系统同时只能容纳 5 个窗口。继续打开，看看会发生什么。</p><button class="btn" ${over||ov.n>=OS.length?'disabled':''} onclick="addO(1)">打开下一条信息</button><button class="btn" ${over||ov.n>=OS.length?'disabled':''} onclick="addO(3)">一次打开 3 条</button><button class="btn" onclick="ov={open:[],lost:[],n:0,hit:false,done:false};ro()">清空重来</button>
+ ${over?`<div class="warn">超额：系统无响应。请关闭窗口，只保留 3 条以内；被关闭的信息将丢失。</div>`:''}
+ <div id="ws" style="${over?'filter:saturate(.3)':''}">${ov.open.map(i=>`<div class="card" style="left:${5+(i*19)%55}%;top:${6+(i*23)%48}%"><div class="h"><span>info_${i+1}.txt</span><button aria-label="关闭" onclick="closeO(${i})"></button></div><div>${OS[i]}</div></div>`).join('')}${ov.open.length?'':'<p class="note" style="padding:12px">桌面是空的。</p>'}</div>
+ ${ov.done?`<h3>结果摘要</h3><p>保留 ${ov.open.length} 条，丢失 ${ov.lost.length} 条。输入越多，并不意味着看到越多。</p>${ov.lost.map(i=>`<div class="msg drop">${OS[i]}</div>`).join('')}`:''}`}
+
+/* 03 CUSTOMIZE: set your own rules */
+const CW={'洞穴':['作品以柏拉图的洞穴寓言为出发点，探讨机器视觉与人类认知之间的差异。','AI 依据像素特征与统计概率识别图像，也可能无法正确区分物体与其投影。','置信度、语义判断等抽象参数，被转化为点阵置换、像素破碎与空间形变。','可以使用系统提供的答案，却不必把它当作唯一的真实。'],
+'跳动的 10%':['作品从音乐旋律中的必然性与偶然性出发，关注人们对下一个音符的预测。','熟悉的规律成为判断的依据。','真正引起注意的，有时恰恰是那一点偏离预期的变化。','自定义是在规则之中，为意外保留位置。'],
+'从捞月到饮水':['作品从倍速文化中的时间压缩出发，观察信息加速如何改变人们的感知与叙事节奏。','当输入不断增加，真正被体验和理解的内容反而可能减少。','饮水是一个无法被真正加速的日常动作。','这是一次对时间与注意力分配方式的重新审视。']};
+const CK=['理解','对照','意外'];
+let cu={w:'洞穴',len:0,tend:0,unc:0,al:[2,1,1],q:'',saved:[]};
+function openCust(){win('w-c','03｜自定义 CUSTOMIZE · 设定规则，再提问','big','');rc()}
+const sg=(k,a)=>`<div class="seg">${a.map((t,i)=>`<button class="${cu[k]==i?'on':''}" onclick="cu.${k}=${i};rc()">${t}</button>`).join('')}</div>`;
+function gen(){
+ const t=CW[cu.w],al=cu.al,idx=[0,1,2].filter(i=>al[i]>0).sort((a,b)=>al[b]-al[a]);
+ const shown=cu.tend==0?idx.slice(0,1):idx,omit=[0,1,2].filter(i=>!shown.includes(i));
+ let o=shown.map(i=>t[i]);if(cu.len==1)o.push(t[3]);
+ return{o:cu.unc==0?[o.join('')+(cu.len==0?'':'')]:o.map((x,i)=>'可能的读法 '+'ABCD'[i]+'：'+x),omit:omit.map(i=>t[i])}}
+function rc(){
+ setV('cust',cu.al.reduce((a,b)=>a+b,0)/6*100);const left=4-cu.al.reduce((a,b)=>a+b,0);const g=gen();
+ const out=(g)=>g.o.map(x=>`<div class="msg">${x}</div>`).join('')+g.omit.map(x=>`<div class="msg drop">${x}</div>`).join('');
+ B('w-c').innerHTML=`<div class="grid2"><div><label><b>提问的作品</b></label><div class="seg">${Object.keys(CW).map(k=>`<button class="${cu.w==k?'on':''}" onclick="cu.w='${k}';rc()" style="font-size:12px">${k}</button>`).join('')}</div>
+ <b>回答方式</b>${sg('len',['简短直接','详细解释'])}<b>判断倾向</b>${sg('tend',['优先效率','保留更多信息'])}<b>不确定性</b>${sg('unc',['给出单一结论','保留多个可能'])}
+ <b>资源分配</b><span class="note">（共 4 点，剩余 ${left}）</span>${CK.map((k,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;margin:3px 0">${k}<span><button class="btn" ${cu.al[i]<1?'disabled':''} onclick="cu.al[${i}]--;rc()">−</button> ${cu.al[i]} <button class="btn" ${left<1?'disabled':''} onclick="cu.al[${i}]++;rc()">＋</button></span></div>`).join('')}</div>
+ <div><b>你的问题</b><input type="text" style="width:100%;padding:8px;margin:4px 0 8px;border:1px solid var(--ink);border-radius:7px;background:var(--paper);color:var(--ink)" value="${cu.q}" placeholder="例如：系统该不该替我判断？" onchange="cu.q=this.value;rc()">
+ ${cu.q?`<p class="note">针对“${cu.q.replace(/</g,'&lt;')}”，按你的规则：</p>`:''}${out(g)}<p class="note">划线的是被你的分配舍弃的内容。</p>
+ <button class="btn" onclick="cu.saved.push(JSON.stringify(g=gen()));if(cu.saved.length>2)cu.saved.shift();rc()">保存为方案</button><button class="btn" onclick="cu={w:cu.w,len:0,tend:0,unc:0,al:[2,1,1],q:'',saved:[]};rc()">重置</button>
+ ${cu.saved.length?`<h3>方案对比</h3><div style="display:grid;grid-template-columns:repeat(${cu.saved.length},1fr);gap:10px">${cu.saved.map((s,i)=>`<div><b>方案 ${i+1}</b>${out(JSON.parse(s))}</div>`).join('')}</div>`:''}</div></div>`}
+</script></body></html>
