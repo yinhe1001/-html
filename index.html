@@ -40,6 +40,7 @@ body{font-family:"PingFang SC","Noto Sans SC","Microsoft YaHei",system-ui,sans-s
 .row{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink);padding:9px 4px;font-size:14px}
 .row:hover,.row.on{background:rgba(120,120,128,.15)}
 .ph{background:repeating-linear-gradient(45deg,var(--side),var(--side) 8px,var(--line) 8px,var(--line) 9px);height:90px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--mute);margin:10px 0}
+.art-images{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.art-photo{display:block;width:100%;max-height:300px;object-fit:contain;background:var(--side);border-radius:6px}.art-images.duo .art-photo{width:calc(50% - 4px);max-height:220px}
 .note{font-size:12px;color:var(--mute)}
 .btn{border:1px solid var(--ink);background:var(--paper);color:var(--ink);padding:7px 11px;border-radius:7px;font-size:13px;margin:3px 4px 3px 0;text-align:left}
 .btn:hover:not(:disabled){background:var(--ink);color:var(--paper)}.btn:disabled{opacity:.35}
@@ -101,6 +102,7 @@ const W=[
 {ch:3,t:'从捞月到饮水',m:'Zhiyi Jin｜影像｜4 分 13 秒',c:'当注意力成为有限资源，我们习惯于加速、筛选和压缩体验，以便容纳更多内容。但被压缩的也可能是感知本身。作品提醒我们，超额不一定意味着获得更多：当输入不断增加，真正被体验和理解的内容反而可能减少。从追逐到饮水，是一次对时间与注意力分配方式的重新审视。'},
 {ch:3,t:'跳动的 10%',m:'任子晴｜三件作品并峙｜单件尺寸：30 × 30 cm｜足银、黄铜、黑檀木、珍珠',c:'当我们依据过往经验预测结果，熟悉的规律便成为判断的依据。但真正引起注意的，有时恰恰是那一点偏离预期的变化。作品让我们重新思考：如果所有选择都只遵循既定标准，我们是否也会错过那些尚未被预料的可能？自定义并不意味着抛弃规则，而是在规则之中，为意外保留位置，也为重新判断留下空间。'},
 {ch:3,t:'洞穴',m:'800mbh｜AI 光影装置',c:'当我们把判断交给系统，往往也默认了系统理解世界的方式。但系统给出的结果并不等同于全部现实，它同样受到识别逻辑、训练方式与判断标准的限制。自定义并不是简单地用人的判断取代机器，而是重新审视判断依据：我们可以使用系统提供的答案，却不必把它当作唯一的真实。'}];
+const WI=[['circle.jpg'],['meta-morphosis.jpg'],['pinocchio.jpg'],['information-harvesters.jpg'],['darkroom.jpg'],['moon-to-water.jpg'],['jumping-10-1.jpg','jumping-10-2.jpg'],['cave.jpg']];
 const CL=[['圈圈','你看到的，是完整信息，还是被某种框架筛选过的信息？',0],['皮诺曹','哪些部分由系统设定，哪些部分不完全受控？',0],['信息时代的拾穗者','同一句话，为什么不同的人会理解成不同的意思？',1],['暗室','一个看似轻盈的数字界面，究竟依赖什么才能存在？',1],['跳动的 10%','规则之内是否仍然存在无法预先安排的结果？',2]];
 const OPEN=[openLimit,openOver,openCust];
 
@@ -112,7 +114,7 @@ function rf(){
  const d=fin.d;let m='';
  if(d=='0')m=`<h3>展览说明</h3><p>当自然、人类与人工智能都受到资源、能力与精力的限制，选择便成为不可避免的行动。本展以“限额—超额—自定义”构建整体叙事：从认识选择规则，到发现取舍带来的遗漏，最终重新思考选择标准与决定的主体。</p><p>限额：规则与额度如何划定可选范围。<br>超额：需求超出额度后，被筛选、遗漏或排除的内容。<br>自定义：在认识限制的基础上，重新决定如何分配有限的资源，以及由谁作出决定。</p><p class="note">三个章节可按任意顺序浏览。</p>`;
  else if(d=='H')m=`<p class="note">这些文件没有标准答案。</p>`+CL.map((c,i)=>`<button class="row" onclick="fin.s=${i};rf()">clue_${c[0]}.txt</button>`).join('')+(fin.s!=null?`<div class="msg"><b>${CL[fin.s][0]}</b><br>${CL[fin.s][1]}<br><button class="btn" onclick="OPEN[${CL[fin.s][2]}]()">打开相关额度：${S[CL[fin.s][2]].n}</button></div>`:'');
- else{const L=W.map((w,i)=>[w,i]).filter(x=>x[0].ch==d);m=L.map(([w,i])=>`<button class="row ${fin.s==i?'on':''}" onclick="fin.s=${i};rf()">${w.t}<br><span class="note">${w.m}</span></button>`).join('')+(fin.s!=null&&W[fin.s].ch==d?`<div class="ph">作品图片（待补充）</div><h3>${W[fin.s].t}</h3><p class="note">${W[fin.s].m}</p><p><b>策展解读</b><br>${W[fin.s].c}</p><p class="note">作品介绍待补充。</p>`:'')}
+ else{const L=W.map((w,i)=>[w,i]).filter(x=>x[0].ch==d);m=L.map(([w,i])=>`<button class="row ${fin.s==i?'on':''}" onclick="fin.s=${i};rf()">${w.t}<br><span class="note">${w.m}</span></button>`).join('')+(fin.s!=null&&W[fin.s].ch==d?`<div class="art-images ${WI[fin.s].length>1?'duo':''}">${WI[fin.s].map(src=>`<img class="art-photo" src="${src}" alt="${W[fin.s].t}" loading="lazy">`).join('')}</div><h3>${W[fin.s].t}</h3><p class="note">${W[fin.s].m}</p><p><b>策展解读</b><br>${W[fin.s].c}</p><p class="note">作品介绍待补充。</p>`:'')}
  B('w-f').innerHTML=`<div class="fz"><nav>${DIRS.map(x=>`<button class="${x[0]==d?'on':''}" onclick="fin.d='${x[0]}';fin.s=null;rf()">📁 ${x[1]}</button>`).join('')}</nav><main>${m}</main></div>`}
 
 function openMap(){const q=encodeURIComponent('北京大学中国当代艺术档案馆 798');win('w-m','Explore｜展览地图','fin',`<p><b>北京大学中国当代艺术档案馆（798）</b><br>2027年1月 — 2月</p><p class="note">具体场地与地址以最终确认信息为准。</p><a class="btn" style="display:inline-block;text-decoration:none" href="https://uri.amap.com/search?keyword=${q}" target="_blank" rel="noopener">高德地图</a><a class="btn" style="display:inline-block;text-decoration:none" href="https://map.baidu.com/search/${q}" target="_blank" rel="noopener">百度地图</a><a class="btn" style="display:inline-block;text-decoration:none" href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener">Google Maps</a>`)}
@@ -124,7 +126,7 @@ function openLimit(){win('w-l','01｜限额 LIMIT · 任务：只用 4 点额度
 function rl(){
  setV('limit',lm.got.length||lm.end?(4-lm.cr)*25:73);
  const ended=lm.end||lm.cr==0,kinds=[...new Set(lm.got.map(i=>LC[i][0]))];
- B('w-l').innerHTML=`<div class="grid2"><div><div class="ph">《圈圈》图片（待补充）</div><p class="note">系列作品｜230 × 150 cm</p><div class="pips">${[0,1,2,3].map(i=>`<i class="${i<lm.cr?'on':''}"></i>`).join('')}</div><p class="note">剩余额度 ${lm.cr} / 4。每个行动消耗 1 点。</p>
+ B('w-l').innerHTML=`<div class="grid2"><div><img class="art-photo" src="circle.jpg" alt="《圈圈》系列作品" loading="lazy"><p class="note">系列作品｜230 × 150 cm</p><div class="pips">${[0,1,2,3].map(i=>`<i class="${i<lm.cr?'on':''}"></i>`).join('')}</div><p class="note">剩余额度 ${lm.cr} / 4。每个行动消耗 1 点。</p>
  ${LC.map((c,i)=>lm.got.includes(i)?'':`<button class="btn" ${ended?'disabled':''} onclick="lm.got.push(${i});lm.cr--;rl()">${c[0]}｜${c[1]}</button>`).join('')}<br><button class="btn" ${ended?'disabled':''} onclick="lm.end=true;rl()">保留额度，结束</button></div>
  <div><h3>已解锁的线索</h3>${lm.got.length?lm.got.map(i=>`<div class="msg"><b>${LC[i][1]}</b><br>${LC[i][2]}</div>`).join(''):'<p class="note">还没有线索。先决定把第一点额度用在哪里。</p>'}
  ${ended?`<div class="warn">任务结束</div><p><b>结果摘要</b><br>你用了 ${4-lm.cr} 点，保留 ${lm.cr} 点；解锁 ${lm.got.length} / 6 条线索，放弃 ${6-lm.got.length} 条。<br>${kinds.includes('对照')?'你把作品放回了策展语境。':'你只听了作品自己的说法，没有对照策展解读。'}${lm.cr>=2?'你把一部分额度留给了未知。':''}</p><button class="btn" onclick="lm={cr:4,got:[],end:false};rl()">重新开始</button>`:''}</div></div>`}
